@@ -7,15 +7,18 @@ import (
 	"text/template"
 
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
 type Server struct {
 	listenAddr string
+	db         *gorm.DB
 }
 
-func NewServer(listenAddr string) *Server {
+func NewServer(listenAddr string, db *gorm.DB) *Server {
 	return &Server{
 		listenAddr: listenAddr,
+		db:         db,
 	}
 }
 
@@ -34,12 +37,11 @@ func (s *Server) Run() {
 }
 
 func (s *Server) handleViewProducts(w http.ResponseWriter, r *http.Request) {
+	var products []Product
+	s.db.Find(&products)
+
 	tmplData := map[string][]Product{
-		"Products": {
-			{Name: "Hand Weapon", Price: 7},
-			{Name: "Dagger", Price: 4},
-			{Name: "Spear", Price: 5},
-		},
+		"Products": products,
 	}
 
 	tmpl := template.Must(template.ParseFiles("templates/admin/list-products.html"))
