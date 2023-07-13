@@ -29,6 +29,7 @@ func (s *Server) Run() {
 
 	mux.Get("/admin/products", s.handleViewProducts)
 	mux.Post("/admin/products/add", s.handleAddProduct)
+	mux.Post("/admin/products/remove", s.handleRemoveProduct)
 
 	// start web server
 	log.Println("Starting application on", s.listenAddr)
@@ -63,4 +64,14 @@ func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("templates/admin/list-products.html"))
 	tmpl.ExecuteTemplate(w, "product-list-element", product)
+}
+
+func (s *Server) handleRemoveProduct(w http.ResponseWriter, r *http.Request) {
+	// @TODO handle error
+	id, _ := ulid.Parse(r.PostFormValue("id"))
+	fmt.Println(id.String())
+
+	product := Product{Id: id}
+
+	s.db.Delete(product)
 }

@@ -18,14 +18,16 @@
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Price</th>
+        <th scope="col">Actions</th>
       </tr>
     </thead>
-    <tbody id="product-list">
+    <tbody id="product-list" hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML swap:1s">
       {{ range .Products }}
       {{ block "product-list-element" .}}
       <tr>
         <td>{{ .Name }}</td>
         <td>{{ .Price }}</td>
+        <td><button class="btn btn-danger" hx-post="/admin/products/remove" hx-vals='{"id": "{{ .Id }}"}'>Del</button></td>
       </tr>
       {{ end }}
       {{ end }}
@@ -45,4 +47,11 @@
     <button type="submit" class="btn btn-primary float-end">Submit</button>
   </form>
 </body>
+
+<style>
+tr.htmx-swapping td {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+</style>
 </html>
